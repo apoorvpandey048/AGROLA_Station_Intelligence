@@ -38,6 +38,7 @@ interface StationAnalyticsViewProps {
   selectedStationId: string;
   onSelectStation: (stationId: string) => void;
   periodLabel: string;
+  onBack?: () => void;
 }
 
 export function StationAnalyticsView({
@@ -45,12 +46,27 @@ export function StationAnalyticsView({
   selectedStationId,
   onSelectStation,
   periodLabel,
+  onBack,
 }: StationAnalyticsViewProps) {
-  // Compare station IDs (up to 3 stations)
+  // Compare station IDs (up to 3 stations), synced when selectedStationId changes
   const [compareIds, setCompareIds] = useState<string[]>([selectedStationId]);
+
+  // Keep primary station synced with selectedStationId prop
+  React.useEffect(() => {
+    setCompareIds((prev) => {
+      if (prev.includes(selectedStationId)) return prev;
+      return [selectedStationId, ...prev.slice(0, 2)];
+    });
+  }, [selectedStationId]);
 
   const activeMetric =
     rankings.find((r) => r.station.id === selectedStationId) || rankings[0];
+
+  // Calculate actual network rank (1-indexed) based on revenue
+  const revenueRank = rankings.findIndex((r) => r.station.id === selectedStationId) + 1;
+  const marginRank = [...rankings]
+    .sort((a, b) => b.avgMarginPercent - a.avgMarginPercent)
+    .findIndex((r) => r.station.id === selectedStationId) + 1;
 
   // Helper to add or remove comparison station
   const toggleCompare = (id: string) => {
@@ -73,6 +89,14 @@ export function StationAnalyticsView({
     return (
       <div className="p-8 text-center bg-white rounded-xl border border-agrola-border">
         <p className="text-sm text-agrola-muted">Keine Standortdaten für diesen Filter verfügbar.</p>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="mt-3 px-4 py-2 bg-agrola-forest text-white text-xs font-semibold rounded-lg hover:bg-agrola-forest-light transition-colors"
+          >
+            ← Zurück zur Übersicht
+          </button>
+        )}
       </div>
     );
   }
@@ -89,6 +113,21 @@ export function StationAnalyticsView({
 
   return (
     <div className="space-y-6">
+      {/* Back / Navigation Bar */}
+      {onBack && (
+        <div className="flex items-center justify-between">
+          <button
+            onClick={onBack}
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-lg bg-white border border-agrola-border text-agrola-forest text-xs font-bold hover:bg-agrola-canvas transition-colors shadow-2xs"
+          >
+            <span>← Zurück zum Dashboard</span>
+          </button>
+          <div className="text-xs text-agrola-muted">
+            Rang <span className="font-bold text-agrola-ink font-mono">#{revenueRank > 0 ? revenueRank : 1}</span> von {rankings.length} Stationen im Umsatz
+          </div>
+        </div>
+      )}
+
       {/* 1. Header & Station Quick Switcher */}
       <div className="bg-white rounded-xl border border-agrola-border p-6 shadow-subtle">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-agrola-border">
@@ -106,6 +145,9 @@ export function StationAnalyticsView({
                 </span>
                 <span className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
                   {s.type}
+                </span>
+                <span className="text-xs font-bold font-mono px-2 py-0.5 rounded-md bg-amber-50 text-amber-900 border border-amber-200">
+                  Netzwerk-Rang #{revenueRank > 0 ? revenueRank : 1}
                 </span>
               </div>
               <p className="text-xs text-agrola-muted mt-1 flex items-center gap-3">
@@ -366,14 +408,28 @@ export function StationAnalyticsView({
                   />
                 </div>
               </div>
+
+              {/* Network Overview Ranking Badges */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-agrola-border/60 text-xs">
+                <div className="p-2 rounded bg-agrola-canvas border border-agrola-border">
+                  <span className="text-[10px] text-agrola-muted uppercase block font-semibold">Umsatz-Rang</span>
+                  <span className="font-mono font-bold text-agrola-ink">#{revenueRank > 0 ? revenueRank : 1}</span>
+                  <span className="text-[10px] text-agrola-muted block">von {rankings.length} Stationen</span>
+                </div>
+                <div className="p-2 rounded bg-agrola-canvas border border-agrola-border">
+                  <span className="text-[10px] text-agrola-muted uppercase block font-semibold">Margen-Rang</span>
+                  <span className="font-mono font-bold text-emerald-700">#{marginRank > 0 ? marginRank : 1}</span>
+                  <span className="text-[10px] text-agrola-muted block">nach Bruttomarge %</span>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="mt-4 p-3 bg-agrola-canvas rounded-lg border border-agrola-border text-[11px] text-agrola-muted leading-relaxed">
-            <span className="font-bold text-agrola-forest">Bewertung:</span>{" "}
+            <span className="font-bold text-agrola-forest">Standort-Bewertung:</span>{" "}
             {activeMetric.revenueVsRegionAvgPct >= 0
-              ? `Überdurchschnittlicher Absatzstandort im Kanton ${s.canton}. Durch die Klassifikation als ${s.type} wird ein stabiler Kundenstrom gesichert.`
-              : `Unterdurchschnittliche Auslastung im regionalen Vergleich. Optimierungspotenzial bei Werbemassnahmen oder Shop-Cross-Selling prüfen.`}
+              ? `Überdurchschnittlicher Absatzstandort im Kanton ${s.canton} (Netzwerk-Rang #${revenueRank > 0 ? revenueRank : 1}). Durch die Klassifikation als ${s.type} wird ein stabiler Kundenstrom gesichert.`
+              : `Unterdurchschnittliche Auslastung im regionalen Vergleich (${s.region}). Optimierungspotenzial bei Werbemassnahmen oder Shop-Cross-Selling prüfen.`}
           </div>
         </div>
       </div>

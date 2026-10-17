@@ -18,6 +18,7 @@ interface MapInnerProps {
   rankings: AggregatedStationMetrics[];
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
+  onGoToAnalytics?: (stationId: string) => void;
   metricMode: "revenue" | "volume" | "margin" | "price";
 }
 
@@ -149,6 +150,7 @@ export default function MapInner({
   rankings,
   selectedStationId,
   onSelectStation,
+  onGoToAnalytics,
   metricMode,
 }: MapInnerProps) {
   const userInteractedRef = useRef<boolean>(false);
@@ -171,6 +173,15 @@ export default function MapInner({
   const handleStationClick = (id: string) => {
     userInteractedRef.current = true;
     onSelectStation(id);
+  };
+
+  const handleAnalyzeClick = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    userInteractedRef.current = true;
+    onSelectStation(id);
+    if (onGoToAnalytics) {
+      onGoToAnalytics(id);
+    }
   };
 
   return (
@@ -228,48 +239,55 @@ export default function MapInner({
               </Tooltip>
 
               <Popup>
-                <div className="p-1 min-w-[210px]">
-                  <div className="text-xs font-bold text-white flex items-center justify-between">
-                    <span>{r.station.name}</span>
-                    <span className="text-[10px] text-agrola-lime font-mono">
-                      {r.station.type}
-                    </span>
+                <div className="p-0.5 min-w-[240px]">
+                  {/* Header: Title and Type with right clearance for the close button */}
+                  <div className="pr-7 pb-2 border-b border-white/10">
+                    <div className="text-xs font-bold text-white flex items-center justify-between gap-1.5">
+                      <span className="truncate" title={r.station.name}>{r.station.name}</span>
+                      <span className="text-[10px] text-agrola-lime font-mono px-1.5 py-0.5 rounded bg-white/10 shrink-0">
+                        {r.station.type}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-emerald-200/80 mt-0.5">
+                      {r.station.region} ({r.station.canton}) · {r.station.pumpsCount} Säulen
+                    </div>
                   </div>
-                  <div className="text-[11px] text-emerald-200/80 mb-2">
-                    {r.station.region} ({r.station.canton}) · {r.station.pumpsCount} Säulen
-                  </div>
-                  <div className="space-y-1 text-xs border-t border-white/10 pt-2 font-mono">
-                    <div className="flex justify-between">
+
+                  {/* Clean Two-Column Metric Rows */}
+                  <div className="space-y-1.5 text-xs py-2.5 font-mono">
+                    <div className="flex items-center justify-between">
                       <span className="text-white/70">Umsatz:</span>
                       <span className="font-bold text-white">
                         CHF {fmtCH(r.totalRevenue)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <span className="text-white/70">Absatz:</span>
                       <span className="text-white">
                         {fmtCH(r.totalVolume)} L
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <span className="text-white/70">Ø Verkaufspreis:</span>
                       <span className="text-agrola-lime font-bold">
                         CHF {r.weightedAvgPrice.toFixed(3)}
                       </span>
                     </div>
-                    <div className="flex justify-between">
+                    <div className="flex items-center justify-between">
                       <span className="text-white/70">Bruttomarge:</span>
-                      <span className="text-white">
-                        {r.avgMarginPercent.toFixed(1)}% (CHF{" "}
-                        {fmtCH(r.totalGrossMargin)})
+                      <span className="text-emerald-300 font-bold whitespace-nowrap">
+                        {r.avgMarginPercent.toFixed(1)}% <span className="text-white/80 font-normal text-[11px]">(CHF {fmtCH(r.totalGrossMargin)})</span>
                       </span>
                     </div>
                   </div>
+
+                  {/* Analyze Location Action Button */}
                   <button
-                    onClick={() => handleStationClick(r.station.id)}
-                    className="w-full mt-3 py-1.5 bg-agrola-lime text-agrola-forest text-xs font-bold rounded hover:bg-agrola-lime-bright transition-colors"
+                    onClick={(e) => handleAnalyzeClick(e, r.station.id)}
+                    className="w-full py-1.5 bg-agrola-lime text-agrola-forest text-xs font-bold rounded-lg hover:bg-agrola-lime-bright transition-all cursor-pointer shadow-sm active:scale-[0.98] flex items-center justify-center gap-1"
                   >
-                    Standort analysieren →
+                    <span>Standort analysieren</span>
+                    <span>→</span>
                   </button>
                 </div>
               </Popup>

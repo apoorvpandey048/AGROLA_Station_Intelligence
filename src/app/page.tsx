@@ -152,6 +152,7 @@ export default function Home() {
                 selectedStationId={selectedStationId}
                 onSelectStation={(id) => setSelectedStationId(id)}
                 periodLabel={activePeriodLabel}
+                onBack={() => setCurrentSection("overview")}
               />
             )}
 

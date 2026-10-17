@@ -110,6 +110,7 @@ export function SwissStationMap({
         rankings={rankings}
         selectedStationId={selectedStationId}
         onSelectStation={onSelectStation}
+        onGoToAnalytics={onGoToAnalytics}
         metricMode={metricMode}
       />
 
