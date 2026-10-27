@@ -17,6 +17,7 @@ import clsx from "clsx";
 
 interface FullMapViewProps {
   rankings: AggregatedStationMetrics[];
+  activeSubview?: string;
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics: (stationId: string) => void;
@@ -24,6 +25,7 @@ interface FullMapViewProps {
 
 export function FullMapView({
   rankings,
+  activeSubview = "karte",
   selectedStationId,
   onSelectStation,
   onGoToAnalytics,
@@ -43,19 +45,25 @@ export function FullMapView({
     return matchesSearch && matchesType;
   });
 
-  return (
-    <div className="space-y-6">
-      {/* 1. Map container */}
-      <SwissStationMap
-        rankings={rankings}
-        selectedStationId={selectedStationId}
-        onSelectStation={onSelectStation}
-        onGoToAnalytics={onGoToAnalytics}
-      />
+  if (activeSubview === "karte") {
+    return (
+      <div key="karte" className="animate-subview h-full min-h-0">
+        <SwissStationMap
+          rankings={rankings}
+          selectedStationId={selectedStationId}
+          onSelectStation={onSelectStation}
+          onGoToAnalytics={onGoToAnalytics}
+          fillHeight
+        />
+      </div>
+    );
+  }
 
-      {/* 2. Station Directory & GIS Filter */}
-      <div className="bg-white rounded-xl border border-agrola-border p-6 shadow-subtle">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-agrola-border mb-4">
+  return (
+    <div key="verzeichnis" className="animate-subview h-full min-h-0">
+      {/* Station Directory & GIS Filter */}
+      <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle h-full flex flex-col min-h-0">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-agrola-border mb-4 shrink-0">
           <div>
             <h3 className="text-base font-bold text-agrola-ink flex items-center gap-2">
               <MapPin className="w-4 h-4 text-agrola-forest" />
@@ -95,7 +103,7 @@ export function FullMapView({
         </div>
 
         {/* Station Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 flex-1 min-h-0 overflow-y-auto pr-0.5 content-start">
           {filteredRankings.map((r) => {
             const isSelected = r.station.id === selectedStationId;
             return (

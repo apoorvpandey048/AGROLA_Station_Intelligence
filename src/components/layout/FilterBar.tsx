@@ -53,8 +53,8 @@ export function FilterBar({
     filters.period !== "30";
 
   return (
-    <div className="bg-white rounded-xl border border-agrola-border p-3.5 shadow-subtle mb-6">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <div className="bg-white rounded-xl border border-agrola-border px-3.5 py-2.5 shadow-subtle">
+      <div className="flex flex-wrap items-center justify-between gap-x-3 gap-y-2">
         {/* Left Filter Controls */}
         <div className="flex flex-wrap items-center gap-3">
           <div className="flex items-center gap-1.5 text-xs font-semibold text-agrola-forest mr-1">

@@ -20,9 +20,10 @@ import { fmtCH } from "@/lib/format";
 interface TimeSeriesCardProps {
   data: TimeSeriesPoint[];
   periodLabel: string;
+  fillHeight?: boolean;
 }
 
-export function TimeSeriesCard({ data, periodLabel }: TimeSeriesCardProps) {
+export function TimeSeriesCard({ data, periodLabel, fillHeight = false }: TimeSeriesCardProps) {
   const [metricKey, setMetricKey] = useState<"revenue" | "volume" | "grossMargin">("revenue");
   const [showPrevOverlay, setShowPrevOverlay] = useState<boolean>(true);
 
@@ -46,9 +47,14 @@ export function TimeSeriesCard({ data, periodLabel }: TimeSeriesCardProps) {
   };
 
   return (
-    <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle">
+    <div
+      className={clsx(
+        "bg-white rounded-xl border border-agrola-border p-5 shadow-subtle",
+        fillHeight && "h-full flex flex-col min-h-0"
+      )}
+    >
       {/* Card Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0">
         <div>
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold text-agrola-ink flex items-center gap-2">
@@ -118,7 +124,7 @@ export function TimeSeriesCard({ data, periodLabel }: TimeSeriesCardProps) {
       </div>
 
       {/* Chart Canvas */}
-      <div className="h-[280px] w-full">
+      <div className={clsx("w-full", fillHeight ? "flex-1 min-h-0" : "h-[280px]")}>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart
             data={data}
@@ -243,7 +249,7 @@ export function TimeSeriesCard({ data, periodLabel }: TimeSeriesCardProps) {
       </div>
 
       {/* Chart Legend Footer */}
-      <div className="mt-3 pt-3 border-t border-agrola-border flex items-center justify-between text-xs text-agrola-muted flex-wrap gap-2">
+      <div className="mt-3 pt-3 border-t border-agrola-border flex items-center justify-between text-xs text-agrola-muted flex-wrap gap-2 shrink-0">
         <div className="flex items-center gap-5">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-1 bg-agrola-forest rounded-full"></span>

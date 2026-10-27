@@ -12,86 +12,131 @@ import { PerformanceExceptions } from "./PerformanceExceptions";
 
 interface NetworkOverviewProps {
   summary: NetworkSummary;
+  activeSubview?: string;
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics: (stationId: string) => void;
   periodLabel: string;
   activeRegion?: string;
   onSelectRegion?: (region: string) => void;
+  layoutMode?: "kpi-first" | "plots-first";
 }
+
+const FOOTER = (
+  <div className="pt-3 mt-3 border-t border-agrola-border text-[11px] text-agrola-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 shrink-0">
+    <p>
+      Konzept- & Vertriebsdemonstration für AGROLA · Alle Datenpunkte, Mengensätze und Preise sind deterministisch simuliert.
+      Kartendaten basieren auf amtlichen WGS84-Koordinaten.
+    </p>
+    <span className="font-mono text-[10px] text-slate-500 whitespace-nowrap">
+      Berechnungsmodell: Schweizer Handelsspannenlogik (reconciled)
+    </span>
+  </div>
+);
 
 export function NetworkOverview({
   summary,
+  activeSubview = "uebersicht",
   selectedStationId,
   onSelectStation,
   onGoToAnalytics,
   periodLabel,
   activeRegion,
   onSelectRegion,
+  layoutMode = "kpi-first",
 }: NetworkOverviewProps) {
-  return (
-    <div className="space-y-6">
-      {/* 1. Executive Top KPI Row */}
-      <KpiGrid summary={summary} />
+  const kpiRow = <KpiGrid summary={summary} />;
 
-      {/* 2. Performance Exceptions & Operating Anomalies */}
-      <PerformanceExceptions
-        exceptions={summary.exceptions}
+  const mapCol = (
+    <div className="xl:col-span-2 min-h-0">
+      <SwissStationMap
+        rankings={summary.rankings}
+        selectedStationId={selectedStationId}
         onSelectStation={onSelectStation}
+        onGoToAnalytics={onGoToAnalytics}
+        fillHeight
       />
+    </div>
+  );
 
-      {/* 3. Central Geographic & Ranking Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
-        <div className="xl:col-span-2">
-          <SwissStationMap
-            rankings={summary.rankings}
-            selectedStationId={selectedStationId}
-            onSelectStation={onSelectStation}
-            onGoToAnalytics={onGoToAnalytics}
-          />
+  const rankingCol = (
+    <div className="xl:col-span-1 min-h-0">
+      <RankingPanel
+        rankings={summary.rankings}
+        selectedStationId={selectedStationId}
+        onSelectStation={onSelectStation}
+        onGoToAnalytics={onGoToAnalytics}
+      />
+    </div>
+  );
+
+  let content: React.ReactNode = null;
+
+  if (activeSubview === "trends") {
+    content = (
+      <div className="h-full grid grid-cols-1 lg:grid-cols-3 gap-4 min-h-0">
+        <div className="lg:col-span-2 min-h-0">
+          <TimeSeriesCard data={summary.timeSeries} periodLabel={periodLabel} fillHeight />
         </div>
-
-        <div className="xl:col-span-1">
-          <RankingPanel
-            rankings={summary.rankings}
-            selectedStationId={selectedStationId}
-            onSelectStation={onSelectStation}
-            onGoToAnalytics={onGoToAnalytics}
-          />
-        </div>
-      </div>
-
-      {/* 4. Time Series Trend & Product Mix Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <TimeSeriesCard
-            data={summary.timeSeries}
-            periodLabel={periodLabel}
-          />
-        </div>
-
-        <div className="lg:col-span-1">
+        <div className="lg:col-span-1 min-h-0 overflow-y-auto pr-0.5">
           <ProductMixCard products={summary.productMix} />
         </div>
       </div>
-
-      {/* 5. Regional Benchmark Breakdown across Swiss Territories */}
-      <RegionalBenchmarkBar
-        benchmarks={summary.regionalBenchmarks}
-        activeRegion={activeRegion}
-        onSelectRegion={onSelectRegion}
-      />
-
-      {/* Footer Disclaimer & Enterprise Compliance */}
-      <div className="pt-4 border-t border-agrola-border text-[11px] text-agrola-muted flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-        <p>
-          Konzept- & Vertriebsdemonstration für AGROLA · Alle Datenpunkte, Mengensätze und Preise sind deterministisch simuliert.
-          Kartendaten basieren auf amtlichen WGS84-Koordinaten.
-        </p>
-        <span className="font-mono text-[10px] text-slate-500 whitespace-nowrap">
-          Berechnungsmodell: Schweizer Handelsspannenlogik (reconciled)
-        </span>
+    );
+  } else if (activeSubview === "regionen") {
+    content = (
+      <div className="h-full grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-0">
+        <div className="xl:col-span-2 min-h-0 overflow-y-auto pr-0.5">
+          <RegionalBenchmarkBar
+            benchmarks={summary.regionalBenchmarks}
+            activeRegion={activeRegion}
+            onSelectRegion={onSelectRegion}
+          />
+        </div>
+        {rankingCol}
       </div>
+    );
+  } else if (activeSubview === "insights") {
+    content = (
+      <div className="h-full flex flex-col gap-4 min-h-0">
+        <div className="shrink-0">{kpiRow}</div>
+        <div className="flex-1 min-h-0 overflow-y-auto pr-0.5">
+          <PerformanceExceptions
+            exceptions={summary.exceptions}
+            onSelectStation={onSelectStation}
+          />
+        </div>
+        {FOOTER}
+      </div>
+    );
+  } else {
+    // uebersicht (default): KPI row + Map + Ranking, filling the viewport
+    const grid = (
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-0 items-stretch">
+        {mapCol}
+        {rankingCol}
+      </div>
+    );
+    content = (
+      <div className="h-full flex flex-col gap-4 min-h-0">
+        {layoutMode === "plots-first" ? (
+          <>
+            {grid}
+            <div className="shrink-0">{kpiRow}</div>
+          </>
+        ) : (
+          <>
+            <div className="shrink-0">{kpiRow}</div>
+            {grid}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div key={activeSubview} className="animate-subview h-full min-h-0">
+      {content}
     </div>
   );
 }

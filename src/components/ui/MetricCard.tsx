@@ -30,7 +30,7 @@ export function MetricCard({
   return (
     <div
       className={clsx(
-        "relative rounded-xl p-5 transition-all duration-200 border",
+        "relative rounded-xl p-4 transition-all duration-200 border",
         highlight
           ? "bg-agrola-forest text-white border-agrola-forest shadow-md"
           : "bg-white text-agrola-ink border-agrola-border hover:border-[#CBD3CB] shadow-subtle"
@@ -60,7 +60,7 @@ export function MetricCard({
       </div>
 
       <div className="flex items-baseline gap-2 my-1">
-        <span className="text-2xl sm:text-3xl font-bold tracking-tight tabular-nums">
+        <span className="text-xl sm:text-2xl font-bold tracking-tight tabular-nums">
           {value}
         </span>
         {unit && (
@@ -75,7 +75,7 @@ export function MetricCard({
         )}
       </div>
 
-      <div className="mt-3 flex items-center justify-between pt-2.5 border-t border-black/5 dark:border-white/10 text-xs">
+      <div className="mt-2 flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/10 text-xs">
         {diffPercent !== undefined ? (
           <div className="flex items-center gap-1.5 font-medium tabular-nums">
             <span

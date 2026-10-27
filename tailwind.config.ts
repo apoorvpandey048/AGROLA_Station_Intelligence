@@ -37,6 +37,8 @@ const config: Config = {
         mono: ["var(--font-mono)", "JetBrains Mono", "IBM Plex Mono", "monospace"],
       },
       boxShadow: {
+        "2xs": "0 1px 1px rgba(24, 38, 32, 0.04)",
+        "xs": "0 1px 2px rgba(24, 38, 32, 0.06), 0 1px 1px rgba(24, 38, 32, 0.04)",
         "subtle": "0 1px 3px rgba(24, 38, 32, 0.05), 0 1px 2px rgba(24, 38, 32, 0.03)",
         "card": "0 2px 8px -2px rgba(24, 38, 32, 0.06), 0 1px 4px -1px rgba(24, 38, 32, 0.03)",
         "elevated": "0 8px 24px -4px rgba(24, 38, 32, 0.08), 0 2px 6px -2px rgba(24, 38, 32, 0.04)",

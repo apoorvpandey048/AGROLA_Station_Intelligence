@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { AggregatedStationMetrics } from "@/types";
-import { Layers, MapPin, Sparkles, Navigation, Fuel, Store, Car, Zap } from "lucide-react";
+import { MapPin, Store, Car, Zap } from "lucide-react";
 import clsx from "clsx";
 import { fmtCH } from "@/lib/format";
 
@@ -23,6 +23,7 @@ interface SwissStationMapProps {
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics?: (stationId: string) => void;
+  fillHeight?: boolean;
 }
 
 export function SwissStationMap({
@@ -30,6 +31,7 @@ export function SwissStationMap({
   selectedStationId,
   onSelectStation,
   onGoToAnalytics,
+  fillHeight = false,
 }: SwissStationMapProps) {
   const [metricMode, setMetricMode] = useState<"revenue" | "volume" | "margin" | "price">("revenue");
 
@@ -38,9 +40,14 @@ export function SwissStationMap({
   ) || rankings[0];
 
   return (
-    <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle">
+    <div
+      className={clsx(
+        "bg-white rounded-xl border border-agrola-border p-5 shadow-subtle",
+        fillHeight && "h-full flex flex-col min-h-0"
+      )}
+    >
       {/* Map Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0">
         <div>
           <div className="flex items-center gap-2">
             <h2 className="text-base font-bold text-agrola-ink flex items-center gap-2">
@@ -106,17 +113,20 @@ export function SwissStationMap({
       </div>
 
       {/* Map Component */}
-      <DynamicMap
-        rankings={rankings}
-        selectedStationId={selectedStationId}
-        onSelectStation={onSelectStation}
-        onGoToAnalytics={onGoToAnalytics}
-        metricMode={metricMode}
-      />
+      <div className={clsx(fillHeight && "flex-1 min-h-0")}>
+        <DynamicMap
+          rankings={rankings}
+          selectedStationId={selectedStationId}
+          onSelectStation={onSelectStation}
+          onGoToAnalytics={onGoToAnalytics}
+          metricMode={metricMode}
+          fillHeight={fillHeight}
+        />
+      </div>
 
       {/* Selected Station Bottom Detail Card */}
       {selectedStation && (
-        <div className="mt-4 p-4 rounded-xl bg-agrola-canvas border border-agrola-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div className="mt-4 p-4 rounded-xl bg-agrola-canvas border border-agrola-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shrink-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-agrola-amber animate-pulse"></span>
@@ -174,7 +184,7 @@ export function SwissStationMap({
       )}
 
       {/* Map Legend */}
-      <div className="mt-3 flex items-center justify-between text-[11px] text-agrola-muted pt-2 border-t border-agrola-border/60">
+      <div className="mt-3 flex items-center justify-between text-[11px] text-agrola-muted pt-2 border-t border-agrola-border/60 shrink-0">
         <div className="flex items-center gap-4 flex-wrap">
           <span className="flex items-center gap-1.5">
             <span className="w-3 h-3 rounded-full bg-[#173D30] border border-agrola-lime inline-block"></span>

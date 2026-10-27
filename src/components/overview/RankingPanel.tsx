@@ -2,9 +2,10 @@
 
 import React, { useState } from "react";
 import { AggregatedStationMetrics } from "@/types";
-import { Trophy, TrendingDown, ArrowRight } from "lucide-react";
+import { Trophy, ArrowRight } from "lucide-react";
 import clsx from "clsx";
 import { fmtCH } from "@/lib/format";
+import { SegmentedControl } from "@/components/ui/SegmentedControl";
 
 interface RankingPanelProps {
   rankings: AggregatedStationMetrics[];
@@ -53,41 +54,19 @@ export function RankingPanel({
           </p>
         </div>
 
-        <div className="inline-flex rounded-lg border border-agrola-border bg-agrola-canvas p-0.5 text-[11px] shrink-0 self-start sm:self-auto">
-          <button
-            onClick={() => setTab("top")}
-            className={clsx(
-              "px-2.5 py-1 rounded font-semibold transition-all",
-              tab === "top"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-muted hover:text-agrola-ink"
-            )}
-          >
-            Top Umsatz
-          </button>
-          <button
-            onClick={() => setTab("margin")}
-            className={clsx(
-              "px-2.5 py-1 rounded font-semibold transition-all",
-              tab === "margin"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-muted hover:text-agrola-ink"
-            )}
-          >
-            Beste Marge
-          </button>
-          <button
-            onClick={() => setTab("bottom")}
-            className={clsx(
-              "px-2.5 py-1 rounded font-semibold transition-all",
-              tab === "bottom"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-muted hover:text-agrola-ink"
-            )}
-          >
-            Potenzial
-          </button>
-        </div>
+        <SegmentedControl
+          size="sm"
+          surface="canvas"
+          ariaLabel="Ranking-Kriterium"
+          className="shrink-0 self-start sm:self-auto"
+          value={tab}
+          onChange={(id) => setTab(id as "top" | "bottom" | "margin")}
+          items={[
+            { id: "top", label: "Top Umsatz" },
+            { id: "margin", label: "Beste Marge" },
+            { id: "bottom", label: "Potenzial" },
+          ]}
+        />
       </div>
 
       {/* List */}

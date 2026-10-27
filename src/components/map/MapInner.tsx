@@ -20,6 +20,7 @@ interface MapInnerProps {
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics?: (stationId: string) => void;
   metricMode: "revenue" | "volume" | "margin" | "price";
+  fillHeight?: boolean;
 }
 
 // Bounding box for Switzerland [[south, west], [north, east]]
@@ -152,6 +153,7 @@ export default function MapInner({
   onSelectStation,
   onGoToAnalytics,
   metricMode,
+  fillHeight = false,
 }: MapInnerProps) {
   const userInteractedRef = useRef<boolean>(false);
 
@@ -185,7 +187,13 @@ export default function MapInner({
   };
 
   return (
-    <div className="relative w-full h-[480px] lg:h-[560px] rounded-xl overflow-hidden border border-agrola-border">
+    <div
+      className={
+        fillHeight
+          ? "relative w-full h-full min-h-[300px] rounded-xl overflow-hidden border border-agrola-border"
+          : "relative w-full h-[480px] lg:h-[560px] rounded-xl overflow-hidden border border-agrola-border"
+      }
+    >
       <MapContainer
         center={SWISS_CENTER}
         zoom={DEFAULT_ZOOM}

@@ -35,7 +35,7 @@ export function PerformanceExceptions({
   };
 
   return (
-    <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle mb-6">
+    <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle">
       <div className="flex items-center justify-between pb-3 border-b border-agrola-border mb-3">
         <div className="flex items-center gap-2">
           <AlertCircle className="w-4 h-4 text-agrola-amber" />

@@ -17,6 +17,11 @@
   --color-border: #E1E6DE;
 }
 
+html,
+body {
+  height: 100%;
+}
+
 body {
   background-color: var(--bg-canvas);
   color: var(--color-ink);
@@ -30,6 +35,29 @@ body {
 /* Custom Swiss Engineering Typography & Accents */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
+}
+
+/* Subview switch entrance — GPU-friendly (opacity + transform only) */
+@keyframes subviewIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-subview {
+  animation: subviewIn 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-subview {
+    animation: none;
+  }
 }
 
 /* Leaflet Custom Marker & Popup Overrides for AGROLA */
