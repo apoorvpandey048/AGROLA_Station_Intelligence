@@ -4,6 +4,7 @@ import React from "react";
 import { Download, Menu, ShieldCheck, CalendarDays, BarChart2, Hash } from "lucide-react";
 import { NavSection } from "./Sidebar";
 import { SegmentedControl, SegmentedItem } from "@/components/ui/SegmentedControl";
+import { Button } from "@/components/ui/Button";
 
 interface HeaderProps {
   currentSection: NavSection;
@@ -126,14 +127,10 @@ export function Header({
           <span className="sm:hidden">Demo</span>
         </div>
 
-        <button
-          onClick={onExportCsv}
-          disabled={isExporting}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white text-agrola-ink border border-agrola-border hover:bg-[#F2F5F0] hover:border-[#CBD3CB] active:scale-[0.98] text-xs font-semibold shadow-subtle transition-all duration-200 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-agrola-forest/40"
-        >
+        <Button variant="secondary" size="sm" onClick={onExportCsv} disabled={isExporting}>
           <Download className="w-3.5 h-3.5 text-agrola-forest" />
           <span>{isExporting ? "Generiere..." : "CSV Export"}</span>
-        </button>
+        </Button>
       </div>
     </header>
   );

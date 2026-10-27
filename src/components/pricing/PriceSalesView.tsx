@@ -19,6 +19,8 @@ import {
 } from "recharts";
 import { fmtCH } from "@/lib/format";
 import { SegmentedControl } from "@/components/ui/SegmentedControl";
+import { StatTile } from "@/components/ui/StatTile";
+import { BarGradient, BAR_RADIUS } from "@/components/charts/ChartBits";
 
 interface PriceSalesViewProps {
   rankings: AggregatedStationMetrics[];
@@ -93,54 +95,35 @@ export function PriceSalesView({
 
       {/* 3 Overview Stat Boxes for Selected Fuel */}
       {activeProductMetric && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5">
-          <div className="p-4 rounded-lg bg-agrola-canvas/60 border border-agrola-border">
-            <span className="text-[10px] uppercase font-bold text-agrola-muted tracking-wider block">
-              Ø Endverbraucherpreis
-            </span>
-            <div className="text-2xl font-bold font-mono text-agrola-ink mt-0.5">
-              CHF {activeProductMetric.avgRetailPrice.toFixed(3)}
-            </div>
-            <span className="text-[11px] text-agrola-muted block mt-1">
-              Absatzgewichtet im Schweizer Netz
-            </span>
-          </div>
-
-          <div className="p-4 rounded-lg bg-agrola-canvas/60 border border-agrola-border">
-            <span className="text-[10px] uppercase font-bold text-agrola-muted tracking-wider block">
-              Ø Beschaffungskosten (Einstand)
-            </span>
-            <div className="text-2xl font-bold font-mono text-slate-700 mt-0.5">
-              CHF {activeProductMetric.avgProcurementCost.toFixed(3)}
-            </div>
-            <span className="text-[11px] text-agrola-muted block mt-1">
-              Raffinerie- & Großhandelspreis (sim.)
-            </span>
-          </div>
-
-          <div className="p-4 rounded-lg bg-emerald-50/60 border border-emerald-200">
-            <span className="text-[10px] uppercase font-bold text-emerald-800 tracking-wider block">
-              Ø Handelsspanne (Spread)
-            </span>
-            <div className="text-2xl font-bold font-mono text-emerald-800 mt-0.5">
-              +CHF {activeProductMetric.spread.toFixed(3)} / L
-            </div>
-            <span className="text-[11px] text-emerald-700 block mt-1">
-              Bruttomargenquote: {activeProductMetric.marginPercent.toFixed(1)}%
-            </span>
-          </div>
-
-          <div className="p-4 rounded-lg bg-agrola-canvas/60 border border-agrola-border">
-            <span className="text-[10px] uppercase font-bold text-agrola-muted tracking-wider block">
-              Gesamtertrag Kraftstoff
-            </span>
-            <div className="text-2xl font-bold font-mono text-agrola-forest mt-0.5">
-              CHF {(activeProductMetric.revenue / 1000).toFixed(0)}k
-            </div>
-            <span className="text-[11px] text-agrola-muted block mt-1">
-              Absatz: {fmtCH(activeProductMetric.volume)} L
-            </span>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-5 stagger-children">
+          <StatTile
+            label="Ø Endverbraucherpreis"
+            value={`CHF ${activeProductMetric.avgRetailPrice.toFixed(3)}`}
+            sub="Absatzgewichtet im Schweizer Netz"
+          />
+          <StatTile
+            label="Ø Beschaffungskosten (Einstand)"
+            value={`CHF ${activeProductMetric.avgProcurementCost.toFixed(3)}`}
+            valueClassName="text-slate-700"
+            sub="Raffinerie- & Großhandelspreis (sim.)"
+          />
+          <StatTile
+            tone="emerald"
+            label="Ø Handelsspanne (Spread)"
+            value={`+CHF ${activeProductMetric.spread.toFixed(3)} / L`}
+            valueClassName="text-emerald-800"
+            sub={
+              <span className="text-emerald-700">
+                Bruttomargenquote: {activeProductMetric.marginPercent.toFixed(1)}%
+              </span>
+            }
+          />
+          <StatTile
+            label="Gesamtertrag Kraftstoff"
+            value={`CHF ${(activeProductMetric.revenue / 1000).toFixed(0)}k`}
+            valueClassName="text-agrola-forest"
+            sub={`Absatz: ${fmtCH(activeProductMetric.volume)} L`}
+          />
         </div>
       )}
     </div>
@@ -173,6 +156,10 @@ export function PriceSalesView({
             data={priceSpreadData}
             margin={{ top: 15, right: 10, left: -10, bottom: 40 }}
           >
+            <defs>
+              <BarGradient id="grad-retail" color="#173D30" />
+              <BarGradient id="grad-procure" color="#B8D96B" />
+            </defs>
             <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEFE9" />
             <XAxis
               dataKey="stationName"
@@ -217,8 +204,8 @@ export function PriceSalesView({
               }}
             />
             <Legend verticalAlign="top" height={36} wrapperStyle={{ fontSize: 11 }} />
-            <Bar dataKey="retailPrice" name="Verkaufspreis (CHF/L)" fill="#173D30" radius={[4, 4, 0, 0]} />
-            <Bar dataKey="procurementCost" name="Einstandspreis (CHF/L)" fill="#B8D96B" radius={[4, 4, 0, 0]} />
+            <Bar dataKey="retailPrice" name="Verkaufspreis (CHF/L)" fill="url(#grad-retail)" radius={BAR_RADIUS} />
+            <Bar dataKey="procurementCost" name="Einstandspreis (CHF/L)" fill="url(#grad-procure)" radius={BAR_RADIUS} />
           </BarChart>
         </ResponsiveContainer>
       </div>

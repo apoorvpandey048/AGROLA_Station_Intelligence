@@ -32,6 +32,7 @@ import {
   Legend,
 } from "recharts";
 import { fmtCH } from "@/lib/format";
+import { BarGradient, BAR_RADIUS } from "@/components/charts/ChartBits";
 
 interface StationAnalyticsViewProps {
   rankings: AggregatedStationMetrics[];
@@ -570,6 +571,11 @@ export function StationAnalyticsView({
         <div className="h-[220px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={comparisonChartData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
+              <defs>
+                <BarGradient id="grad-b95" color="#059669" />
+                <BarGradient id="grad-b98" color="#0F766E" />
+                <BarGradient id="grad-diesel" color="#D97706" />
+              </defs>
               <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEFE9" />
               <XAxis dataKey="name" tickLine={false} tick={{ fontSize: 11, fill: "#7E9088" }} />
               <YAxis
@@ -583,9 +589,9 @@ export function StationAnalyticsView({
                 contentStyle={{ backgroundColor: "#173D30", borderColor: "#173D30", color: "#fff", borderRadius: 8, fontSize: 11 }}
               />
               <Legend wrapperStyle={{ fontSize: 11, paddingTop: 6 }} />
-              <Bar dataKey="Benzin 95" fill="#059669" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Benzin 98" fill="#0F766E" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="Diesel" fill="#D97706" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="Benzin 95" fill="url(#grad-b95)" radius={BAR_RADIUS} />
+              <Bar dataKey="Benzin 98" fill="url(#grad-b98)" radius={BAR_RADIUS} />
+              <Bar dataKey="Diesel" fill="url(#grad-diesel)" radius={BAR_RADIUS} />
             </BarChart>
           </ResponsiveContainer>
         </div>
