@@ -48,13 +48,13 @@ export function PerformanceExceptions({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 stagger-children">
         {exceptions.map((exc) => (
           <div
             key={exc.id}
             onClick={() => onSelectStation && onSelectStation(exc.stationId)}
             className={clsx(
-              "p-3 rounded-lg border flex flex-col justify-between transition-all cursor-pointer hover:shadow-xs",
+              "group p-3 rounded-lg border flex flex-col justify-between cursor-pointer lift hover:shadow-card",
               severityStyles[exc.severity]
             )}
           >

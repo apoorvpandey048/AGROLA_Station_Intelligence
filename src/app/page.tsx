@@ -148,7 +148,8 @@ export default function Home() {
       {/* 2. Main Executive Content Column (fixed-height cockpit frame) */}
       <div className="flex-1 lg:pl-64 flex flex-col min-w-0 h-screen">
         {/* Top bar: compact header + global filters (does not grow) */}
-        <div className="shrink-0 px-4 lg:px-6 pt-4 pb-3 w-full max-w-[1700px] mx-auto">
+        <div className="shrink-0 border-b border-agrola-border/70 bg-agrola-canvas/75 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.5)_inset,0_6px_16px_-12px_rgba(24,38,32,0.25)]">
+          <div className="px-4 lg:px-6 pt-4 pb-3 w-full max-w-[1700px] mx-auto">
           <Header
             currentSection={currentSection}
             subviews={SUBVIEWS[currentSection]}
@@ -182,10 +183,11 @@ export default function Home() {
               filteredStationCount={summary.activeStationsCount}
             />
           </div>
+          </div>
         </div>
 
         {/* Content region: fills remaining viewport height, no page-level scroll */}
-        <main className="flex-1 min-h-0 overflow-hidden px-4 lg:px-6 pb-4 w-full max-w-[1700px] mx-auto">
+        <main className="flex-1 min-h-0 overflow-hidden px-4 lg:px-6 pt-4 pb-4 w-full max-w-[1700px] mx-auto">
           <div key={currentSection} className="h-full">
             {currentSection === "overview" && (
               <NetworkOverview

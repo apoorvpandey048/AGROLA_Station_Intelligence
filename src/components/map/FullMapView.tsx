@@ -3,16 +3,7 @@
 import React, { useState } from "react";
 import { AggregatedStationMetrics } from "@/types";
 import { SwissStationMap } from "./SwissStationMap";
-import {
-  MapPin,
-  Search,
-  Filter,
-  ExternalLink,
-  Store,
-  Car,
-  Zap,
-  ArrowRight,
-} from "lucide-react";
+import { MapPin, Search } from "lucide-react";
 import clsx from "clsx";
 
 interface FullMapViewProps {
@@ -103,7 +94,7 @@ export function FullMapView({
         </div>
 
         {/* Station Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 flex-1 min-h-0 overflow-y-auto pr-0.5 content-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 flex-1 min-h-0 overflow-y-auto pr-0.5 content-start stagger-children">
           {filteredRankings.map((r) => {
             const isSelected = r.station.id === selectedStationId;
             return (
@@ -111,10 +102,10 @@ export function FullMapView({
                 key={r.station.id}
                 onClick={() => onSelectStation(r.station.id)}
                 className={clsx(
-                  "p-3.5 rounded-lg border transition-all cursor-pointer flex flex-col justify-between",
+                  "p-3.5 rounded-lg border cursor-pointer flex flex-col justify-between lift",
                   isSelected
                     ? "bg-[#F3F7F2] border-agrola-forest shadow-xs ring-1 ring-agrola-forest"
-                    : "bg-agrola-canvas/50 border-agrola-border hover:bg-agrola-canvas"
+                    : "bg-agrola-canvas/50 border-agrola-border hover:bg-agrola-canvas hover:shadow-card"
                 )}
               >
                 <div>

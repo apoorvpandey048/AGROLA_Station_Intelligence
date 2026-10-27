@@ -34,7 +34,7 @@ export function RegionalBenchmarkBar({
         </span>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 stagger-children">
         {benchmarks.map((reg) => {
           const isSelected = activeRegion === reg.region;
           const barWidth = (reg.totalRevenue / maxRevenue) * 100;
@@ -43,10 +43,10 @@ export function RegionalBenchmarkBar({
             <div
               key={reg.region}
               onClick={() => onSelectRegion && onSelectRegion(reg.region)}
-              className={`p-3.5 rounded-lg border transition-all cursor-pointer ${
+              className={`p-3.5 rounded-lg border cursor-pointer lift ${
                 isSelected
                   ? "bg-[#F3F7F2] border-agrola-forest shadow-xs ring-1 ring-agrola-forest"
-                  : "bg-agrola-canvas/50 border-agrola-border/80 hover:bg-agrola-canvas hover:border-agrola-border"
+                  : "bg-agrola-canvas/50 border-agrola-border/80 hover:bg-agrola-canvas hover:border-agrola-border hover:shadow-card"
               }`}
             >
               <div className="flex items-center justify-between mb-2">
