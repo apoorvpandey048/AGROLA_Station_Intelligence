@@ -45,6 +45,7 @@ export function FullMapView({
           onSelectStation={onSelectStation}
           onGoToAnalytics={onGoToAnalytics}
           fillHeight
+          showStationDetail
         />
       </div>
     );

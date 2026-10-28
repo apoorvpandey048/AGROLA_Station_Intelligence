@@ -136,7 +136,7 @@ export default function Home() {
   const activePeriodLabel = periodLabels[filters.period] || "Letzte 30 Tage";
 
   return (
-    <div className="h-screen overflow-hidden bg-agrola-canvas flex">
+    <div className="h-[100dvh] overflow-hidden bg-agrola-canvas flex">
       {/* 1. Sidebar Navigation */}
       <Sidebar
         currentSection={currentSection}
@@ -146,7 +146,7 @@ export default function Home() {
       />
 
       {/* 2. Main Executive Content Column (fixed-height cockpit frame) */}
-      <div className="flex-1 lg:pl-64 flex flex-col min-w-0 h-screen">
+      <div className="flex-1 lg:pl-64 flex flex-col min-w-0 h-[100dvh]">
         {/* Top bar: compact header + global filters (does not grow) */}
         <div className="shrink-0 border-b border-agrola-border/70 bg-agrola-canvas/75 backdrop-blur-md shadow-[0_1px_0_rgba(255,255,255,0.5)_inset,0_6px_16px_-12px_rgba(24,38,32,0.25)]">
           <div className="px-4 lg:px-6 pt-4 pb-3 w-full max-w-[1700px] mx-auto">

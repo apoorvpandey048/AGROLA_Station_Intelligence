@@ -11,7 +11,7 @@ import { fmtCH } from "@/lib/format";
 const DynamicMap = dynamic(() => import("./MapInner"), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[460px] lg:h-[540px] rounded-xl bg-[#E8ECE5] flex flex-col items-center justify-center text-agrola-muted border border-agrola-border">
+    <div className="w-full h-full min-h-0 rounded-xl bg-[#E8ECE5] flex flex-col items-center justify-center text-agrola-muted border border-agrola-border">
       <div className="w-8 h-8 border-2 border-agrola-forest border-t-transparent rounded-full animate-spin mb-3"></div>
       <div className="text-xs font-semibold">Lade Schweizer Geodaten & Stationen...</div>
     </div>
@@ -24,6 +24,9 @@ interface SwissStationMapProps {
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics?: (stationId: string) => void;
   fillHeight?: boolean;
+  // Show the selected-station detail card below the map. Used by the Interactive
+  // Map page; the Network Overview relies on the on-click map popup instead.
+  showStationDetail?: boolean;
 }
 
 export function SwissStationMap({
@@ -32,6 +35,7 @@ export function SwissStationMap({
   onSelectStation,
   onGoToAnalytics,
   fillHeight = false,
+  showStationDetail = false,
 }: SwissStationMapProps) {
   const [metricMode, setMetricMode] = useState<"revenue" | "volume" | "margin" | "price">("revenue");
 
@@ -124,8 +128,8 @@ export function SwissStationMap({
         />
       </div>
 
-      {/* Selected Station Bottom Detail Card */}
-      {selectedStation && (
+      {/* Selected Station Detail Card — Interactive Map only (Overview uses the map popup) */}
+      {showStationDetail && selectedStation && (
         <div className="mt-4 p-4 rounded-xl bg-agrola-canvas border border-agrola-border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shrink-0">
           <div className="space-y-1">
             <div className="flex items-center gap-2">

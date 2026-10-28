@@ -60,6 +60,29 @@ function MapController({
   return null;
 }
 
+// Keep Leaflet in sync when its container is resized by the flexible layout.
+// The map height now shrinks/grows to fit the viewport; without invalidateSize
+// on resize, tiles can render gray or misaligned until the next interaction.
+function MapResizeHandler() {
+  const map = useMap();
+
+  useEffect(() => {
+    const container = map.getContainer();
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => map.invalidateSize());
+    });
+    observer.observe(container);
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
+  }, [map]);
+
+  return null;
+}
+
 // Custom UI Button inside map to reset view to whole Switzerland
 function ResetViewButton() {
   const map = useMap();
@@ -190,7 +213,7 @@ export default function MapInner({
     <div
       className={
         fillHeight
-          ? "relative w-full h-full min-h-[300px] rounded-xl overflow-hidden border border-agrola-border"
+          ? "relative w-full h-full min-h-0 rounded-xl overflow-hidden border border-agrola-border"
           : "relative w-full h-[480px] lg:h-[560px] rounded-xl overflow-hidden border border-agrola-border"
       }
     >
@@ -217,6 +240,8 @@ export default function MapInner({
           selectedStation={selectedStation}
           userInteractedRef={userInteractedRef}
         />
+
+        <MapResizeHandler />
 
         <ResetViewButton />
 
