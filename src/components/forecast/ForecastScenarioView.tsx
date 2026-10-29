@@ -381,21 +381,19 @@ export function ForecastScenarioView({
               <div className="flex justify-between">
                 <span className="text-emerald-900/80">Umsatzeffekt:</span>
                 <span className={clsx("font-bold text-sm", summary.revenueDelta >= 0 ? "text-emerald-800" : "text-rose-700")}>
-                  {summary.revenueDelta >= 0 ? "+" : ""}
-                  CHF {(summary.revenueDelta / 1000).toFixed(1)}k
+                  {`${summary.revenueDelta >= 0 ? "+" : ""}CHF ${(summary.revenueDelta / 1000).toFixed(1)}k`}
                 </span>
               </div>
               <div className="flex justify-between">
                 <span className="text-emerald-900/80">Margeneffekt (DB I):</span>
                 <span className={clsx("font-bold text-sm", summary.marginDelta >= 0 ? "text-emerald-800" : "text-rose-700")}>
-                  {summary.marginDelta >= 0 ? "+" : ""}
-                  CHF {(summary.marginDelta / 1000).toFixed(1)}k
+                  {`${summary.marginDelta >= 0 ? "+" : ""}CHF ${(summary.marginDelta / 1000).toFixed(1)}k`}
                 </span>
               </div>
               <div className="flex justify-between text-[11px] pt-1 border-t border-emerald-300/60">
                 <span className="text-emerald-900/80">Volumenreaktion:</span>
                 <span className="font-semibold text-emerald-900">
-                  {summary.volumeDeltaPct >= 0 ? "+" : ""}{summary.volumeDeltaPct}% Absatzmenge
+                  {`${summary.volumeDeltaPct >= 0 ? "+" : ""}${summary.volumeDeltaPct}% Absatzmenge`}
                 </span>
               </div>
             </div>
@@ -452,17 +450,17 @@ export function ForecastScenarioView({
                 </td>
                 <td className="py-2.5 text-right font-semibold">
                   <span className={row.volumeDeltaPct >= 0 ? "text-emerald-700" : "text-rose-700"}>
-                    {row.volumeDeltaPct >= 0 ? "+" : ""}{row.volumeDeltaPct.toFixed(1)}%
+                    {`${row.volumeDeltaPct >= 0 ? "+" : ""}${row.volumeDeltaPct.toFixed(1)}%`}
                   </span>
                 </td>
                 <td className="py-2.5 text-right">
                   <span className={row.revenueDelta >= 0 ? "text-emerald-700 font-bold" : "text-rose-700"}>
-                    {row.revenueDelta >= 0 ? "+" : ""}CHF {(row.revenueDelta / 1000).toFixed(1)}k
+                    {`${row.revenueDelta >= 0 ? "+" : ""}CHF ${(row.revenueDelta / 1000).toFixed(1)}k`}
                   </span>
                 </td>
                 <td className="py-2.5 text-right">
                   <span className={row.marginDelta >= 0 ? "text-emerald-700 font-bold" : "text-rose-700"}>
-                    {row.marginDelta >= 0 ? "+" : ""}CHF {(row.marginDelta / 1000).toFixed(1)}k
+                    {`${row.marginDelta >= 0 ? "+" : ""}CHF ${(row.marginDelta / 1000).toFixed(1)}k`}
                   </span>
                 </td>
                 <td className="py-2.5 text-right font-bold text-agrola-forest">

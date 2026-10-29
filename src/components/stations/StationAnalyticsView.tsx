@@ -204,8 +204,7 @@ export function StationAnalyticsView({
                   : "text-rose-700"
               )}
             >
-              {activeMetric.revenueGrowthPct >= 0 ? "+" : ""}
-              {activeMetric.revenueGrowthPct.toFixed(1)}% vs. Vorperiode
+              {`${activeMetric.revenueGrowthPct >= 0 ? "+" : ""}${activeMetric.revenueGrowthPct.toFixed(1)}% vs. Vorperiode`}
             </span>
           </div>
         </div>
@@ -225,8 +224,7 @@ export function StationAnalyticsView({
                   : "text-rose-700"
               )}
             >
-              {activeMetric.volumeGrowthPct >= 0 ? "+" : ""}
-              {activeMetric.volumeGrowthPct.toFixed(1)}% vs. Vorperiode
+              {`${activeMetric.volumeGrowthPct >= 0 ? "+" : ""}${activeMetric.volumeGrowthPct.toFixed(1)}% vs. Vorperiode`}
             </span>
           </div>
         </div>
@@ -343,8 +341,7 @@ export function StationAnalyticsView({
                       : "text-rose-700"
                   )}
                 >
-                  {activeMetric.revenueVsRegionAvgPct >= 0 ? "+" : ""}
-                  {activeMetric.revenueVsRegionAvgPct.toFixed(1)}%
+                  {`${activeMetric.revenueVsRegionAvgPct >= 0 ? "+" : ""}${activeMetric.revenueVsRegionAvgPct.toFixed(1)}%`}
                 </span>
               </div>
               <div className="w-full bg-[#EAEFEA] h-2 rounded-full overflow-hidden">
@@ -376,8 +373,7 @@ export function StationAnalyticsView({
                       : "text-rose-700"
                   )}
                 >
-                  {activeMetric.volumeVsRegionAvgPct >= 0 ? "+" : ""}
-                  {activeMetric.volumeVsRegionAvgPct.toFixed(1)}%
+                  {`${activeMetric.volumeVsRegionAvgPct >= 0 ? "+" : ""}${activeMetric.volumeVsRegionAvgPct.toFixed(1)}%`}
                 </span>
               </div>
               <div className="w-full bg-[#EAEFEA] h-2 rounded-full overflow-hidden">
@@ -554,7 +550,7 @@ export function StationAnalyticsView({
               {comparedMetrics.map((cm) => (
                 <td key={cm.station.id} className="py-2.5 text-right font-semibold">
                   <span className={cm.revenueGrowthPct >= 0 ? "text-emerald-700" : "text-rose-700"}>
-                    {cm.revenueGrowthPct >= 0 ? "+" : ""}{cm.revenueGrowthPct.toFixed(1)}%
+                    {`${cm.revenueGrowthPct >= 0 ? "+" : ""}${cm.revenueGrowthPct.toFixed(1)}%`}
                   </span>
                 </td>
               ))}

@@ -3,9 +3,8 @@
 import React, { useState } from "react";
 import {
   ResponsiveContainer,
-  AreaChart,
+  ComposedChart,
   Area,
-  LineChart,
   Line,
   XAxis,
   YAxis,
@@ -126,7 +125,7 @@ export function TimeSeriesCard({ data, periodLabel, fillHeight = false }: TimeSe
       {/* Chart Canvas */}
       <div className={clsx("w-full", fillHeight ? "flex-1 min-h-0" : "h-[280px]")}>
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart
+          <ComposedChart
             data={data}
             margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
           >
@@ -241,10 +240,11 @@ export function TimeSeriesCard({ data, periodLabel, fillHeight = false }: TimeSe
                 strokeWidth={1.8}
                 strokeDasharray="4 4"
                 dot={false}
+                connectNulls
                 name="Vorperiode"
               />
             )}
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       </div>
 

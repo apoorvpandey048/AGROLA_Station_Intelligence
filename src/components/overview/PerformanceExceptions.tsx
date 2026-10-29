@@ -7,12 +7,13 @@ import clsx from "clsx";
 
 interface PerformanceExceptionsProps {
   exceptions: PerformanceException[];
-  onSelectStation?: (stationId: string) => void;
+  /** Opens the station's full analysis (Standortanalyse → Profil). */
+  onOpenStation?: (stationId: string) => void;
 }
 
 export function PerformanceExceptions({
   exceptions,
-  onSelectStation,
+  onOpenStation,
 }: PerformanceExceptionsProps) {
   if (!exceptions || exceptions.length === 0) return null;
 
@@ -52,7 +53,7 @@ export function PerformanceExceptions({
         {exceptions.map((exc) => (
           <div
             key={exc.id}
-            onClick={() => onSelectStation && onSelectStation(exc.stationId)}
+            onClick={() => onOpenStation?.(exc.stationId)}
             className={clsx(
               "group p-3 rounded-lg border flex flex-col justify-between cursor-pointer lift hover:shadow-card",
               severityStyles[exc.severity]
@@ -85,9 +86,17 @@ export function PerformanceExceptions({
 
             <div className="mt-2.5 pt-2 border-t border-black/5 flex items-center justify-between text-[10px] font-semibold text-agrola-forest">
               <span>{exc.region}</span>
-              <span className="flex items-center gap-0.5 group-hover:translate-x-0.5 transition-transform">
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onOpenStation?.(exc.stationId);
+                }}
+                aria-label={`${exc.stationName} prüfen`}
+                className="flex items-center gap-0.5 rounded px-1 -mx-1 group-hover:translate-x-0.5 transition-transform hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-agrola-forest"
+              >
                 Prüfen <ArrowRight className="w-3 h-3" />
-              </span>
+              </button>
             </div>
           </div>
         ))}
