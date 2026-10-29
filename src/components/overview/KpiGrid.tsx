@@ -13,13 +13,15 @@ import {
 
 interface KpiGridProps {
   summary: NetworkSummary;
+  compact?: boolean;
 }
 
-export function KpiGrid({ summary }: KpiGridProps) {
+export function KpiGrid({ summary, compact = false }: KpiGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 stagger-children">
       {/* 1. Gesamtumsatz */}
       <MetricCard
+        compact={compact}
         label="Gesamtumsatz"
         value={`CHF ${(summary.totalRevenue / 1000000).toFixed(2)}M`}
         unit=""
@@ -32,6 +34,7 @@ export function KpiGrid({ summary }: KpiGridProps) {
 
       {/* 2. Treibstoffabsatz */}
       <MetricCard
+        compact={compact}
         label="Treibstoffabsatz"
         value={`${(summary.totalVolume / 1000000).toFixed(2)}M`}
         unit="Liter"
@@ -43,6 +46,7 @@ export function KpiGrid({ summary }: KpiGridProps) {
 
       {/* 3. Ø Verkaufspreis */}
       <MetricCard
+        compact={compact}
         label="Ø Verkaufspreis"
         value={summary.weightedAvgPrice.toFixed(3)}
         unit="CHF / L"
@@ -52,6 +56,7 @@ export function KpiGrid({ summary }: KpiGridProps) {
 
       {/* 4. Bruttomarge */}
       <MetricCard
+        compact={compact}
         label="Bruttomarge"
         value={`CHF ${(summary.totalGrossMargin / 1000).toFixed(0)}k`}
         unit={`(${summary.avgMarginPercent.toFixed(1)}%)`}
@@ -62,7 +67,8 @@ export function KpiGrid({ summary }: KpiGridProps) {
 
       {/* 5. Operatives Nettoergebnis */}
       <MetricCard
-        label="Operativer Deckungsbeitrag"
+        compact={compact}
+        label={compact ? "Deckungsbeitrag" : "Operativer Deckungsbeitrag"}
         value={`CHF ${(summary.netOperatingProfit / 1000).toFixed(0)}k`}
         unit=""
         subtext="Nach Stationsoverhead & Logistik"
@@ -71,6 +77,7 @@ export function KpiGrid({ summary }: KpiGridProps) {
 
       {/* 6. Aktive Standorte */}
       <MetricCard
+        compact={compact}
         label="Aktive Standorte"
         value={summary.activeStationsCount}
         unit="Stationen"

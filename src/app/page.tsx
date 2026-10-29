@@ -196,6 +196,7 @@ export default function Home() {
                 selectedStationId={selectedStationId}
                 onSelectStation={(id) => setSelectedStationId(id)}
                 onGoToAnalytics={goToStationAnalysis}
+                onOpenFullMap={() => selectSection("map")}
                 periodLabel={activePeriodLabel}
                 activeRegion={filters.region !== "all" ? filters.region : undefined}
                 onSelectRegion={(reg) =>

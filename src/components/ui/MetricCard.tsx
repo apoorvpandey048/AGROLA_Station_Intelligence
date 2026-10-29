@@ -11,6 +11,8 @@ interface MetricCardProps {
   subtext?: string;
   icon?: React.ReactNode;
   highlight?: boolean;
+  // Tighter padding and a single-line value, for rows that share the screen with a map.
+  compact?: boolean;
 }
 
 export function MetricCard({
@@ -22,6 +24,7 @@ export function MetricCard({
   subtext,
   icon,
   highlight = false,
+  compact = false,
 }: MetricCardProps) {
   const isPositive = diffPercent !== undefined && diffPercent > 0;
   const isNegative = diffPercent !== undefined && diffPercent < 0;
@@ -30,16 +33,19 @@ export function MetricCard({
   return (
     <div
       className={clsx(
-        "relative rounded-xl p-4 transition-all duration-200 border",
+        "relative rounded-xl transition-all duration-200 border",
+        compact ? "px-3.5 py-3" : "p-4",
         highlight
           ? "bg-agrola-forest text-white border-agrola-forest shadow-md"
           : "bg-white text-agrola-ink border-agrola-border hover:border-[#CBD3CB] shadow-subtle"
       )}
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className={clsx("flex items-center justify-between gap-2", !compact && "mb-2")}>
         <span
+          title={compact ? label : undefined}
           className={clsx(
             "text-[11px] font-semibold uppercase tracking-wider",
+            compact && "truncate",
             highlight ? "text-agrola-lime" : "text-agrola-muted"
           )}
         >
@@ -48,7 +54,8 @@ export function MetricCard({
         {icon && (
           <div
             className={clsx(
-              "w-7 h-7 rounded-lg flex items-center justify-center text-sm",
+              "rounded-lg flex items-center justify-center text-sm shrink-0",
+              compact ? "w-6 h-6" : "w-7 h-7",
               highlight
                 ? "bg-white/10 text-agrola-lime"
                 : "bg-agrola-canvas text-agrola-forest border border-agrola-border/60"
@@ -59,14 +66,20 @@ export function MetricCard({
         )}
       </div>
 
-      <div className="flex items-baseline gap-2 my-1">
-        <span className="text-xl sm:text-2xl font-bold tracking-tight tabular-nums">
+      <div className={clsx("flex items-baseline gap-2", compact ? "mt-0.5" : "my-1")}>
+        <span
+          className={clsx(
+            "font-bold tracking-tight tabular-nums",
+            compact ? "text-xl whitespace-nowrap" : "text-xl sm:text-2xl"
+          )}
+        >
           {value}
         </span>
         {unit && (
           <span
             className={clsx(
               "text-xs font-medium",
+              compact && "whitespace-nowrap",
               highlight ? "text-white/70" : "text-agrola-muted"
             )}
           >
@@ -75,7 +88,12 @@ export function MetricCard({
         )}
       </div>
 
-      <div className="mt-2 flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/10 text-xs">
+      <div
+        className={clsx(
+          "flex items-center justify-between text-xs",
+          compact ? "mt-1" : "mt-2 pt-2 border-t border-black/5 dark:border-white/10"
+        )}
+      >
         {diffPercent !== undefined ? (
           <div className="flex items-center gap-1.5 font-medium tabular-nums">
             <span

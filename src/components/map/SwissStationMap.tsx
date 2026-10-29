@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import dynamic from "next/dynamic";
 import { AggregatedStationMetrics } from "@/types";
-import { MapPin, Store, Car, Zap } from "lucide-react";
+import { MapPin, Store, Car, Zap, Maximize2 } from "lucide-react";
 import clsx from "clsx";
 import { fmtCH } from "@/lib/format";
 
@@ -27,6 +27,8 @@ interface SwissStationMapProps {
   // Show the selected-station detail card below the map. Used by the Interactive
   // Map page; the Network Overview relies on the on-click map popup instead.
   showStationDetail?: boolean;
+  // When set, shows a "Vollbild" button that opens the full Interactive Map page.
+  onExpand?: () => void;
 }
 
 export function SwissStationMap({
@@ -36,8 +38,14 @@ export function SwissStationMap({
   onGoToAnalytics,
   fillHeight = false,
   showStationDetail = false,
+  onExpand,
 }: SwissStationMapProps) {
   const [metricMode, setMetricMode] = useState<"revenue" | "volume" | "margin" | "price">("revenue");
+  const metricLabel = { revenue: "Umsatz", volume: "Absatz", margin: "Marge", price: "Ø Preis" };
+
+  // The Overview shares the screen with KPIs and rankings, so it uses slimmer
+  // chrome: no subtitle, and the legend floats inside the map instead of below it.
+  const compactChrome = !showStationDetail;
 
   const selectedStation = rankings.find(
     (r) => r.station.id === selectedStationId
@@ -46,15 +54,24 @@ export function SwissStationMap({
   return (
     <div
       className={clsx(
-        "bg-white rounded-xl border border-agrola-border p-5 shadow-subtle",
+        "bg-white rounded-xl border border-agrola-border shadow-subtle",
+        compactChrome ? "p-4" : "p-5",
         fillHeight && "h-full flex flex-col min-h-0"
       )}
     >
       {/* Map Header & Controls */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 shrink-0">
+      <div
+        className={clsx(
+          "flex flex-col sm:flex-row sm:items-center justify-between gap-3 shrink-0",
+          compactChrome ? "mb-3" : "mb-4"
+        )}
+      >
         <div>
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-bold text-agrola-ink flex items-center gap-2">
+            <h2
+              className="text-base font-bold text-agrola-ink flex items-center gap-2"
+              title={compactChrome ? "Auf Marker klicken für Details" : undefined}
+            >
               <MapPin className="w-4 h-4 text-agrola-forest" />
               <span>Standortnetzwerk Schweiz</span>
             </h2>
@@ -62,62 +79,76 @@ export function SwissStationMap({
               {rankings.length} Standorte
             </span>
           </div>
-          <p className="text-xs text-agrola-muted mt-0.5">
-            Interaktive Visualisierung nach Performance-Metrik · Auf Marker klicken für Details
-          </p>
+          {!compactChrome && (
+            <p className="text-xs text-agrola-muted mt-0.5">
+              Interaktive Visualisierung nach Performance-Metrik · Auf Marker klicken für Details
+            </p>
+          )}
         </div>
 
-        {/* Metric Mode Pill Selector */}
-        <div className="inline-flex rounded-lg border border-agrola-border bg-agrola-canvas p-0.5 text-xs">
-          <button
-            onClick={() => setMetricMode("revenue")}
-            className={clsx(
-              "px-2.5 py-1 font-semibold rounded-md transition-all",
-              metricMode === "revenue"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-ink hover:text-agrola-forest"
-            )}
-          >
-            Umsatz
-          </button>
-          <button
-            onClick={() => setMetricMode("volume")}
-            className={clsx(
-              "px-2.5 py-1 font-semibold rounded-md transition-all",
-              metricMode === "volume"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-ink hover:text-agrola-forest"
-            )}
-          >
-            Absatz (L)
-          </button>
-          <button
-            onClick={() => setMetricMode("margin")}
-            className={clsx(
-              "px-2.5 py-1 font-semibold rounded-md transition-all",
-              metricMode === "margin"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-ink hover:text-agrola-forest"
-            )}
-          >
-            Marge %
-          </button>
-          <button
-            onClick={() => setMetricMode("price")}
-            className={clsx(
-              "px-2.5 py-1 font-semibold rounded-md transition-all",
-              metricMode === "price"
-                ? "bg-agrola-forest text-white shadow-xs"
-                : "text-agrola-ink hover:text-agrola-forest"
-            )}
-          >
-            Ø Preis
-          </button>
+        <div className="flex items-center gap-2">
+          {/* Metric Mode Pill Selector */}
+          <div className="inline-flex rounded-lg border border-agrola-border bg-agrola-canvas p-0.5 text-xs">
+            <button
+              onClick={() => setMetricMode("revenue")}
+              className={clsx(
+                "px-2.5 py-1 font-semibold rounded-md transition-all",
+                metricMode === "revenue"
+                  ? "bg-agrola-forest text-white shadow-xs"
+                  : "text-agrola-ink hover:text-agrola-forest"
+              )}
+            >
+              Umsatz
+            </button>
+            <button
+              onClick={() => setMetricMode("volume")}
+              className={clsx(
+                "px-2.5 py-1 font-semibold rounded-md transition-all",
+                metricMode === "volume"
+                  ? "bg-agrola-forest text-white shadow-xs"
+                  : "text-agrola-ink hover:text-agrola-forest"
+              )}
+            >
+              Absatz (L)
+            </button>
+            <button
+              onClick={() => setMetricMode("margin")}
+              className={clsx(
+                "px-2.5 py-1 font-semibold rounded-md transition-all",
+                metricMode === "margin"
+                  ? "bg-agrola-forest text-white shadow-xs"
+                  : "text-agrola-ink hover:text-agrola-forest"
+              )}
+            >
+              Marge %
+            </button>
+            <button
+              onClick={() => setMetricMode("price")}
+              className={clsx(
+                "px-2.5 py-1 font-semibold rounded-md transition-all",
+                metricMode === "price"
+                  ? "bg-agrola-forest text-white shadow-xs"
+                  : "text-agrola-ink hover:text-agrola-forest"
+              )}
+            >
+              Ø Preis
+            </button>
+          </div>
+          {onExpand && (
+            <button
+              onClick={onExpand}
+              title="Karte im Vollbild öffnen"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-agrola-border bg-white text-xs font-semibold text-agrola-forest hover:bg-agrola-canvas transition-colors"
+            >
+              <Maximize2 className="w-3.5 h-3.5" />
+              <span>Vollbild</span>
+            </button>
+          )}
         </div>
       </div>
 
       {/* Map Component */}
-      <div className={clsx(fillHeight && "flex-1 min-h-0")}>
+      <div className={clsx("relative", fillHeight && "flex-1 min-h-0")}>
         <DynamicMap
           rankings={rankings}
           selectedStationId={selectedStationId}
@@ -126,6 +157,19 @@ export function SwissStationMap({
           metricMode={metricMode}
           fillHeight={fillHeight}
         />
+        {compactChrome && (
+          <div className="pointer-events-none absolute bottom-2 left-2 z-[450] flex items-center gap-3 rounded-lg bg-white/90 px-2.5 py-1.5 text-[10px] text-agrola-muted shadow-sm border border-agrola-border/60">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#173D30] border border-agrola-lime inline-block"></span>
+              <span>Standardstation</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-agrola-amber border border-white inline-block"></span>
+              <span>Aktive Selektion</span>
+            </span>
+            <span className="font-mono">Grösse = {metricLabel[metricMode]}</span>
+          </div>
+        )}
       </div>
 
       {/* Selected Station Detail Card — Interactive Map only (Overview uses the map popup) */}
@@ -187,25 +231,27 @@ export function SwissStationMap({
         </div>
       )}
 
-      {/* Map Legend */}
-      <div className="mt-3 flex items-center justify-between text-[11px] text-agrola-muted pt-2 border-t border-agrola-border/60 shrink-0">
-        <div className="flex items-center gap-4 flex-wrap">
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#173D30] border border-agrola-lime inline-block"></span>
-            <span>Standardstation</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-agrola-amber border border-white inline-block"></span>
-            <span>Aktive Selektion</span>
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="font-mono text-[10px]">Grösse/Zahl = gewählte Metrik ({metricMode})</span>
+      {/* Map Legend — Interactive Map page; the Overview uses the in-map overlay */}
+      {!compactChrome && (
+        <div className="mt-3 flex items-center justify-between text-[11px] text-agrola-muted pt-2 border-t border-agrola-border/60 shrink-0">
+          <div className="flex items-center gap-4 flex-wrap">
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-[#173D30] border border-agrola-lime inline-block"></span>
+              <span>Standardstation</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-3 h-3 rounded-full bg-agrola-amber border border-white inline-block"></span>
+              <span>Aktive Selektion</span>
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="font-mono text-[10px]">Grösse/Zahl = gewählte Metrik ({metricMode})</span>
+            </span>
+          </div>
+          <span className="hidden sm:inline font-mono text-[10px]">
+            Koordinaten: WGS84 CH
           </span>
         </div>
-        <span className="hidden sm:inline font-mono text-[10px]">
-          Koordinaten: WGS84 CH
-        </span>
-      </div>
+      )}
     </div>
   );
 }

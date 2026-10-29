@@ -16,6 +16,7 @@ interface NetworkOverviewProps {
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics: (stationId: string) => void;
+  onOpenFullMap?: () => void;
   periodLabel: string;
   activeRegion?: string;
   onSelectRegion?: (region: string) => void;
@@ -40,24 +41,13 @@ export function NetworkOverview({
   selectedStationId,
   onSelectStation,
   onGoToAnalytics,
+  onOpenFullMap,
   periodLabel,
   activeRegion,
   onSelectRegion,
   layoutMode = "kpi-first",
 }: NetworkOverviewProps) {
   const kpiRow = <KpiGrid summary={summary} />;
-
-  const mapCol = (
-    <div className="xl:col-span-2 min-h-0">
-      <SwissStationMap
-        rankings={summary.rankings}
-        selectedStationId={selectedStationId}
-        onSelectStation={onSelectStation}
-        onGoToAnalytics={onGoToAnalytics}
-        fillHeight
-      />
-    </div>
-  );
 
   const rankingCol = (
     <div className="xl:col-span-1 min-h-0">
@@ -110,23 +100,41 @@ export function NetworkOverview({
       </div>
     );
   } else {
-    // uebersicht (default): KPI row + Map + Ranking, filling the viewport
+    // uebersicht (default): compact KPI row + Map + Ranking, filling the viewport.
+    // Ranking gets a fixed column so the map takes all remaining width.
     const grid = (
-      <div className="flex-1 grid grid-cols-1 xl:grid-cols-3 gap-4 min-h-0 items-stretch">
-        {mapCol}
-        {rankingCol}
+      <div className="flex-1 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-4 min-h-0 items-stretch">
+        <div className="min-h-0">
+          <SwissStationMap
+            rankings={summary.rankings}
+            selectedStationId={selectedStationId}
+            onSelectStation={onSelectStation}
+            onGoToAnalytics={onGoToAnalytics}
+            onExpand={onOpenFullMap}
+            fillHeight
+          />
+        </div>
+        <div className="min-h-0">
+          <RankingPanel
+            rankings={summary.rankings}
+            selectedStationId={selectedStationId}
+            onSelectStation={onSelectStation}
+            onGoToAnalytics={onGoToAnalytics}
+          />
+        </div>
       </div>
     );
+    const compactKpiRow = <KpiGrid summary={summary} compact />;
     content = (
       <div className="h-full flex flex-col gap-4 min-h-0">
         {layoutMode === "plots-first" ? (
           <>
             {grid}
-            <div className="shrink-0">{kpiRow}</div>
+            <div className="shrink-0">{compactKpiRow}</div>
           </>
         ) : (
           <>
-            <div className="shrink-0">{kpiRow}</div>
+            <div className="shrink-0">{compactKpiRow}</div>
             {grid}
           </>
         )}
