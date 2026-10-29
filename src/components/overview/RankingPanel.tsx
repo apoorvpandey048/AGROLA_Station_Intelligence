@@ -12,6 +12,8 @@ interface RankingPanelProps {
   selectedStationId: string | null;
   onSelectStation: (stationId: string) => void;
   onGoToAnalytics?: (stationId: string) => void;
+  // Title and tabs on separate rows, for the narrow fixed column on the Overview.
+  stacked?: boolean;
 }
 
 export function RankingPanel({
@@ -19,6 +21,7 @@ export function RankingPanel({
   selectedStationId,
   onSelectStation,
   onGoToAnalytics,
+  stacked = false,
 }: RankingPanelProps) {
   const [tab, setTab] = useState<"top" | "bottom" | "margin">("top");
 
@@ -43,7 +46,12 @@ export function RankingPanel({
   return (
     <div className="bg-white rounded-xl border border-agrola-border p-5 shadow-subtle flex flex-col h-full min-w-0">
       {/* Header & Tabs */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pb-3 border-b border-agrola-border mb-3">
+      <div
+        className={clsx(
+          "flex flex-col justify-between gap-2.5 pb-3 border-b border-agrola-border mb-3",
+          !stacked && "sm:flex-row sm:items-center"
+        )}
+      >
         <div>
           <h3 className="text-sm font-bold text-agrola-ink flex items-center gap-1.5">
             <Trophy className="w-4 h-4 text-agrola-amber" />
@@ -58,7 +66,11 @@ export function RankingPanel({
           size="sm"
           surface="canvas"
           ariaLabel="Ranking-Kriterium"
-          className="shrink-0 self-start sm:self-auto"
+          className={
+            stacked
+              ? "w-full [&>button]:flex-1 [&>button]:justify-center"
+              : "shrink-0 self-start sm:self-auto"
+          }
           value={tab}
           onChange={(id) => setTab(id as "top" | "bottom" | "margin")}
           items={[

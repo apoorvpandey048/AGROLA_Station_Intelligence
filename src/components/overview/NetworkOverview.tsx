@@ -120,6 +120,7 @@ export function NetworkOverview({
             selectedStationId={selectedStationId}
             onSelectStation={onSelectStation}
             onGoToAnalytics={onGoToAnalytics}
+            stacked
           />
         </div>
       </div>
